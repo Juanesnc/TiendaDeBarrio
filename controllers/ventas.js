@@ -1,12 +1,16 @@
 const { response, request } = require('express');
 const { Pool } = require('pg');
 
+//Relacion base de datos
+
 const pool = new Pool({
     host: 'localhost',
     user: 'postgres',
     password: '12345',
     database: 'tienda'
 })
+
+//Crear Venta
 
 const ventasPost = async (req, res = response) => {
 
@@ -33,6 +37,8 @@ const ventasPost = async (req, res = response) => {
         }
     });
 }
+
+//Actualizar Venta
 
 const ventasPut = async (req, res = response) => {
 
@@ -77,6 +83,8 @@ const ventasPut = async (req, res = response) => {
     }
 }
 
+//Eliminar Venta
+
 const ventasDelete = async (req, res = response) => {
     const idAdmin = req.params.id;
     const { idSale } = req.body;
@@ -109,11 +117,15 @@ const ventasDelete = async (req, res = response) => {
     }
 }
 
+//Listar Ventas
+
 const ventasGet = async (req = request, res = response) => {
     const data = await pool.query('SELECT * FROM sales');
 
     res.status(200).json(data.rows);
 }
+
+//Entregar Valor De Ventas Dia
 
 const cierresDiariosGet = async (req = request, res = response) => {
     const idAdmin = req.params.id;
@@ -145,6 +157,8 @@ const cierresDiariosGet = async (req = request, res = response) => {
     }
 }
 
+//Entregar Valor De Ventas Mes
+
 const cierresMensualesGet = async (req = request, res = response) => {
     const idAdmin = req.params.id;
     const { month } = req.body;
@@ -174,6 +188,8 @@ const cierresMensualesGet = async (req = request, res = response) => {
         });
     }
 }
+
+//Exportacion de elementos
 
 module.exports = {
     ventasPost,
