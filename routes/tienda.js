@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { ventasGet, ventasPut, ventasPost, ventasDelete, cierresDiariosGet } = require('../controllers/ventas');
+const { ventasGet, ventasPut, ventasPost, ventasDelete, cierresDiariosGet, cierresMensualesGet } = require('../controllers/ventas');
 const { productosGet, productosPost} = require('../controllers/productos');
 const { usuariosGet, usuariosPost, usuariosPatch, usuariosDelete, rolPost } = require('../controllers/usuarios');
 
@@ -21,5 +21,6 @@ router.post('/crearRol/:id', rolPost);
 //Routes de Cierres diarios
 router.get('/cierresDiarios/:id', cierresDiariosGet);
 //Routes de balance mensual
+router.get('/cierresMensuales/:id', cierresMensualesGet);
 
 module.exports = router;
