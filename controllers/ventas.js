@@ -76,10 +76,35 @@ const ventasPut = async (req, res = response) => {
     }
 }
 
-const ventasDelete = (req, res = response) => {
-    res.json({
-        msg: 'delete API - controller'
-    });
+const ventasDelete = async (req, res = response) => {
+    const idAdmin = req.params.id;
+    const { idSale } = req.body;
+    const dataUser = await pool.query("SELECT roles_id FROM users Where id = $1", [idAdmin]);
+    const data = await pool.query("SELECT id FROM roles WHERE name = 'admin'");
+
+    if (dataUser.rows[0].roles_id == data.rows[0].id) {
+        pool.query("DELETE FROM sales WHERE id = $1", [idSale], (error, result) => {
+            if (error) {
+                res.status(500).json({
+                    msg: "Ha ocurrido un problema con la base de datos!"
+                });
+            } else {
+                if (result.rowCount > 0) {
+                    res.status(200).json({
+                        msg: "Se ha borrado exitosamente la venta seleccionada!"
+                    });
+                } else {
+                    res.status(404).json({
+                        msg: "No se encontraron ventas con el ID ingresado o no se ha ingresado ninguno para la busqueda!"
+                    });
+                }
+            }
+        });
+    } else {
+        res.status(401).json({
+            msg: 'Actualmente no cuentas con los permisos adecuados para esta tarea, por favor verificar con un admin!'
+        });
+    }
 }
 
 const ventasGet = async (req = request, res = response) => {
