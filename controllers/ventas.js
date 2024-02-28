@@ -27,18 +27,53 @@ const ventasPost = async (req, res = response) => {
                 });
             } else {
                 res.status(404).json({
-                    msg: "No se encontraron ningun producto con ese ID o hace falta de este mismo"
+                    msg: "No se encontraron ningun producto con ese ID o hace falta de este mismo!"
                 });
             }
         }
     });
 }
 
-const ventasPut = (req, res = response) => {
+const ventasPut = async (req, res = response) => {
+    
+    const idAdmin = req.params.id;
+    const { idSale, idProduct, qty, users_id } = req.body;
+    const dataUser = await pool.query("SELECT roles_id FROM users Where id = $1", [idAdmin]);
+    const data = await pool.query("SELECT id FROM roles WHERE name = 'admin'");
 
-    res.json({
-        msg: 'put API - controller'
-    });
+    if (dataUser.rows[0].roles_id == data.rows[0].id) {
+        if (idProduct != null) {
+            if(users_id == null){
+                users_id = idAdmin;
+            }
+            pool.query("UPDATE sales SET (products_id, qty, users_id) = ($1, $2, $3) WHERE id = $4", [idProduct, qty, users_id, idSale], (error, result) => {
+                if (error) {
+                    res.status(500).json({
+                        msg: "Ha ocurrido un problema con la base de datos!"
+                    });
+                } else {
+                    if (result.rowCount > 0) {
+                        res.status(200).json({
+                            msg: "Se ha actualizado exitosamente la venta!"
+                        });
+                    } else {
+                        res.status(404).json({
+                            msg: "No se encontro ninguna venta con el ID ingresado o hace falta informacion para la busqueda!"
+                        });
+                    }
+                }
+            });
+        } else {
+            res.status(404).json({
+                msg: "No se ha ingresado ningun producto para poder realizar un cambio!"
+            });
+        }
+
+    } else {
+        res.status(401).json({
+            msg: 'Actualmente no cuentas con los permisos adecuados para esta tarea, por favor verificar con un admin!'
+        });
+    }
 }
 
 const ventasDelete = (req, res = response) => {
