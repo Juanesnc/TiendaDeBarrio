@@ -112,9 +112,34 @@ const ventasGet = async (req = request, res = response) => {
     res.status(200).json(data.rows);
 }
 
+const cierresDiariosGet = async (req = request, res = response) => {
+    const idAdmin = req.params.id;
+    const {day} = req.body;
+    console.log(req.body);
+    console.log(day);
+    const dataUser = await pool.query("SELECT roles_id FROM users Where id = $1", [idAdmin]);
+    const data = await pool.query("SELECT id FROM roles WHERE name = 'admin'");
+
+    if (dataUser.rows[0].roles_id == data.rows[0].id) {
+        const data = await pool.query("SELECT SUM(qty) AS Total_de_ventas_dia FROM sales WHERE date_part('day', sale_at) = $1", [day]);
+        if(data.rows[0].total_de_ventas_dia != null){
+            res.status(200).json(data.rows[0]);
+        }else{
+            res.status(404).json({
+                msg: 'No se ha encontrado ninguna venta con el dia ingresado o no se cuenta con este en la busqueda!'
+            });
+        }
+    } else {
+        res.status(401).json({
+            msg: 'Actualmente no cuentas con los permisos adecuados para esta tarea, por favor verificar con un admin!'
+        });
+    }
+}
+
 module.exports = {
     ventasPost,
     ventasPut,
     ventasDelete,
-    ventasGet
+    ventasGet,
+    cierresDiariosGet
 }
