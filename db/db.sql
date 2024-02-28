@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users(
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    document VARCHAR(20),
+    document VARCHAR(20) UNIQUE,
     last_name VARCHAR(30),
     name VARCHAR(30),
     roles_id UUID
@@ -15,7 +15,7 @@ INSERT INTO users(document, last_name, name, roles_id) VALUES
 CREATE TABLE products(
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     description VARCHAR(30),
-    name VARCHAR(30),
+    name VARCHAR(30) UNIQUE,
     price INTEGER 
 );
 
@@ -28,7 +28,7 @@ INSERT INTO products(id, description, name, price) VALUES
 
 CREATE TABLE roles(
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    name VARCHAR(30)
+    name VARCHAR(30) UNIQUE
 );
 
 INSERT INTO roles(id, name) VALUES
